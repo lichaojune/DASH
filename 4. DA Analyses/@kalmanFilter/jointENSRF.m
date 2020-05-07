@@ -62,11 +62,21 @@ Ye = NaN( nObs, nEns );
 sites = false(nObs, nTime);
 calibRatio = NaN( nObs, nTime );
 
-% Generate model estimates
+% Generate model estimates in parallel
+Mpsm = cell( numel(F), 1 );
 for d = 1:numel(F)
-    Mpsm = M(F{d}.H, :);    
-    hasObs = ~isnan( D(d,:) );    
-    [Ye(d,:), R(d,hasObs), sites(d,hasObs)] = dash.processYeR( F{d}, Mpsm, R(d,hasObs), NaN, d  );
+    Mpsm{d} = M(F{d}.H, :);
+end
+parfor d = 1:numel(F)
+    Dslice = D(d,:);
+    Rslice = R(d,:);
+    siteSlice = false(1, nTime);
+    hasobs = ~isnan( Dslice );
+    
+    [Ye(d,:), Rslice(hasobs), siteSlice(hasObs)] = dash.processYeR( F{d}, Mpsm{d}, Rslice(hasobs), NaN, d );
+    
+    R(d,:) = Rslice;
+    sites(d,:) = siteSlice;
 end
 
 % Reduce M to reconstructed elements. Get state vector length
