@@ -73,7 +73,7 @@ parfor d = 1:numel(F)
     siteSlice = false(1, nTime);
     hasobs = ~isnan( Dslice );
     
-    [Ye(d,:), Rslice(hasobs), siteSlice(hasObs)] = dash.processYeR( F{d}, Mpsm{d}, Rslice(hasobs), NaN, d );
+    [Ye(d,:), Rslice(hasobs), siteSlice(hasobs)] = dash.processYeR( F{d}, Mpsm{d}, Rslice(hasobs), NaN, d );
     
     R(d,:) = Rslice;
     sites(d,:) = siteSlice;
